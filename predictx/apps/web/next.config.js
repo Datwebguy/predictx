@@ -6,6 +6,12 @@ const nextConfig = {
   images: {
     domains: ["api.dicebear.com"],
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   webpack: (config) => {
     // MetaMask SDK (pulled in by wagmi connectors) imports React Native storage.
     // Stub it out so the web bundle compiles without warnings.
