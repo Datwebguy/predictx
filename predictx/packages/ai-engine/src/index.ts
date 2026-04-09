@@ -33,9 +33,11 @@ async function bootstrap() {
   server.get("/health", async () => ({ status: "ok", ts: Date.now() }));
 
   // Start background workers
-  startResolutionWorker();
-  startScheduler();
-  startIndexer();
+  if (!process.env.VERCEL) {
+    startResolutionWorker();
+    startScheduler();
+    startIndexer();
+  }
 
   const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3001;
   await server.listen({ port, host: "0.0.0.0" });
