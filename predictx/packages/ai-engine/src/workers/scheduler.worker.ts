@@ -1,4 +1,3 @@
-// @ts-nocheck
 import Anthropic from "@anthropic-ai/sdk";
 import {
   createWalletClient,
@@ -102,7 +101,7 @@ async function deployNewMarkets() {
       abi:          USDC_ABI,
       functionName: "balanceOf",
       args:         [account.address],
-    }) as bigint;
+    } as any) as bigint;
 
     const balanceNum = Number(balance) / 1e6;
     if (balanceNum < 5) {
@@ -161,14 +160,14 @@ async function deployNewMarkets() {
           address:      factoryAddress as `0x${string}`,
           abi:          FACTORY_ABI,
           functionName: "getMarketCount",
-        }) as bigint;
+        } as any) as bigint;
 
         const marketAddr = await publicClient.readContract({
           address:      factoryAddress as `0x${string}`,
           abi:          FACTORY_ABI,
           functionName: "allMarkets",
           args:         [count - 1n],
-        }) as string;
+        } as any) as string;
 
         await prisma.market.update({
           where: { id: market.id },

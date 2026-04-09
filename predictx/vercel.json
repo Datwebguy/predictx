@@ -13,7 +13,7 @@
   "experimentalServices": {
     "ai-engine": {
       "entrypoint": "packages/ai-engine",
-      "routePrefix": "/",
+      "routePrefix": "/api",
       "buildCommand": "npm install && npm run build"
     }
   }
