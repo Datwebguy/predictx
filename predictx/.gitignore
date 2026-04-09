@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+.yarn/cache
+
+# Build outputs
+.next/
+dist/
+out/
+build/
+artifacts/
+cache/
+typechain-types/
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Prisma
+packages/ai-engine/prisma/migrations/
+
+# Expo
+apps/mobile/.expo/
+apps/mobile/android/
+apps/mobile/ios/
+
+# Misc
+.DS_Store
+*.log
+.turbo/
+
+.vercel

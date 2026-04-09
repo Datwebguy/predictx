@@ -1,0 +1,20 @@
+{
+  "name": "predictx",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "yarn workspace @predictx/web dev",
+    "dev:mobile": "yarn workspace @predictx/mobile start",
+    "dev:api": "yarn workspace @predictx/ai-engine dev",
+    "build:contracts": "yarn workspace @predictx/contracts compile",
+    "test:contracts": "yarn workspace @predictx/contracts test",
+    "deploy:testnet": "yarn workspace @predictx/contracts deploy:arc"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}

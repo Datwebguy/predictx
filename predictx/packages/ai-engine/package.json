@@ -1,0 +1,28 @@
+{
+  "name": "@predictx/ai-engine",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "ts-node-dev --respawn src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.27.0",
+    "@predictx/shared": "*",
+    "@prisma/client": "^5.14.0",
+    "bullmq": "^5.7.0",
+    "dotenv": "^16.4.0",
+    "fastify": "^4.27.0",
+    "@fastify/cors": "^9.0.1",
+    "ioredis": "^5.3.2",
+    "viem": "^2.15.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "prisma": "^5.14.0",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.4.0"
+  }
+}

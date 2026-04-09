@@ -1,0 +1,39 @@
+{
+  "name": "@predictx/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 4200",
+    "build": "next build",
+    "start": "next start -p 4200",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@circle-fin/adapter-viem-v2": "^1.8.1",
+    "@circle-fin/app-kit": "^1.2.1",
+    "@predictx/shared": "*",
+    "@privy-io/react-auth": "^1.84.0",
+    "@privy-io/wagmi": "^0.2.0",
+    "@tanstack/react-query": "^5.45.0",
+    "clsx": "^2.1.1",
+    "date-fns": "^3.6.0",
+    "lucide-react": "^0.400.0",
+    "next": "14.2.4",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "recharts": "^2.12.7",
+    "tailwind-merge": "^2.4.0",
+    "viem": "^2.15.0",
+    "wagmi": "^2.10.0",
+    "zustand": "^4.5.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.39",
+    "tailwindcss": "^3.4.4",
+    "typescript": "^5.4.0"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "installCommand": "npm install",
+  "buildCommand": "cd apps/web && npm run build",
+  "outputDirectory": "apps/web/.next",
+  "framework": "nextjs",
+  "env": {
+    "NEXT_PUBLIC_ARC_CHAIN_ID": "5042002",
+    "NEXT_PUBLIC_ARC_RPC": "https://rpc.testnet.arc.network",
+    "NEXT_PUBLIC_USDC_ADDRESS": "0x3600000000000000000000000000000000000000",
+    "NEXT_PUBLIC_FACTORY_ADDRESS": "0x1C969004C2A6EfBE1059038A3553AAbF4AB99645",
+    "NEXT_PUBLIC_ORACLE_ADDRESS": "0xF41aa79E3Db0b0c49607b06e813aE007b5F364E3"
+  },
+  "experimentalServices": {
+    "ai-engine": {
+      "entrypoint": "packages/ai-engine",
+      "routePrefix": "/",
+      "buildCommand": "npm install && npm run build"
+    }
+  }
+}

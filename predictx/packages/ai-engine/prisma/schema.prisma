@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(uuid())
+  address   String     @unique
+  username  String?    @unique
+  avatarUrl String?
+  totalPnl  Float      @default(0)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  markets   Market[]   @relation("CreatedMarkets")
+  positions Position[]
+  trades    Trade[]
+
+  @@map("users")
+}
+
+model Market {
+  id             String              @id @default(uuid())
+  address        String              @unique
+  question       String
+  description    String
+  category       String
+  creatorAddress String
+  resolvesAt     DateTime
+  createdAt      DateTime            @default(now())
+  outcome        String              @default("OPEN")
+  status         String              @default("active")
+  initLiquidity  Float               @default(0)
+  yesProbability Float               @default(50)
+  volume24h      Float               @default(0)
+  totalVolume    Float               @default(0)
+  liquidity      Float               @default(0)
+  creator        User                @relation("CreatedMarkets", fields: [creatorAddress], references: [address])
+  positions      Position[]
+  resolutions    ResolutionAttempt[]
+  trades         Trade[]
+
+  @@map("markets")
+}
+
+model Position {
+  id          String   @id @default(uuid())
+  marketId    String
+  userAddress String
+  yesShares   String   @default("0")
+  noShares    String   @default("0")
+  avgYesPrice Float    @default(0)
+  avgNoPrice  Float    @default(0)
+  realizedPnl Float    @default(0)
+  updatedAt   DateTime @updatedAt
+  market      Market   @relation(fields: [marketId], references: [id])
+  user        User     @relation(fields: [userAddress], references: [address])
+
+  @@unique([marketId, userAddress])
+  @@map("positions")
+}
+
+model Trade {
+  id          String   @id @default(uuid())
+  marketId    String
+  userAddress String
+  isYes       Boolean
+  usdcAmount  Float
+  shares      Float
+  price       Float
+  txHash      String   @unique
+  timestamp   DateTime @default(now())
+  market      Market   @relation(fields: [marketId], references: [id])
+  user        User     @relation(fields: [userAddress], references: [address])
+
+  @@map("trades")
+}
+
+model ResolutionAttempt {
+  id               String   @id @default(uuid())
+  marketId         String
+  outcome          String
+  confidence       Float
+  reasoning        String
+  sources          String[]
+  submittedOnChain Boolean  @default(false)
+  txHash           String?
+  createdAt        DateTime @default(now())
+  market           Market   @relation(fields: [marketId], references: [id])
+
+  @@map("resolution_attempts")
+}
