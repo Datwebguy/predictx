@@ -1,8 +1,8 @@
 "use client";
 import { PrivyProvider } from "@privy-io/react-auth";
-import { WagmiProvider } from "@privy-io/wagmi";
+import { WagmiProvider, createConfig } from "@privy-io/wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { createConfig, http } from "wagmi";
+import { http } from "wagmi";
 import { defineChain } from "viem";
 
 export const arcTestnet = defineChain({
@@ -63,12 +63,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
           ],
         },
         embeddedWallets: {
-          createOnLogin:              "users-without-wallets",
-          requireUserPasswordOnCreate: false,
-          noPromptOnSignature:         false,
-        },
-        externalWallets: {
-          coinbaseWallet: { connectionOptions: "smartWalletOnly" },
+          ethereum: {
+            createOnLogin: "users-without-wallets",
+          },
         },
         defaultChain:    arcTestnet,
         supportedChains: [arcTestnet],
