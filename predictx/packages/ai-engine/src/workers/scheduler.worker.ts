@@ -73,7 +73,7 @@ const INIT_LIQUIDITY = parseUnits("5", 6); // 5 USDC per market
 const GAS = { maxFeePerGas: 160000000000n, maxPriorityFeePerGas: 1000000000n };
 
 // ── Auto-deploy undeployed markets on-chain ─────────────────────────────────
-async function deployNewMarkets() {
+export async function deployNewMarkets() {
   try {
     const privateKey     = process.env.DEPLOYER_PRIVATE_KEY;
     const factoryAddress = process.env.FACTORY_ADDRESS;
