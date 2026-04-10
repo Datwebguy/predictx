@@ -151,7 +151,7 @@ async function processWinningsClaimed(
 
 let lastIndexedBlock = 0n;
 
-async function indexNewBlocks() {
+export async function indexNewBlocks() {
   try {
     const currentBlock = await publicClient.getBlockNumber();
 

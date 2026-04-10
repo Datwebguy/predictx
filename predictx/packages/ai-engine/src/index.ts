@@ -21,6 +21,17 @@ async function bootstrap() {
   server.register(resolutionRoute, { prefix: "/api/resolution" });
   server.register(usersRoute,      { prefix: "/api/users" });
 
+  // Manual trigger for Indexer (useful for Vercel/Cron)
+  server.post("/api/indexer/trigger", async (req, reply) => {
+    try {
+      const { indexNewBlocks } = await import("./workers/indexer");
+      await indexNewBlocks();
+      return reply.send({ success: true, message: "Indexing complete" });
+    } catch (err: any) {
+      return reply.status(500).send({ error: err.message });
+    }
+  });
+
   // Root
   server.get("/", async () => ({
     name: "PredictX AI Engine",
