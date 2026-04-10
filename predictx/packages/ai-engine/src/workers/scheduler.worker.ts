@@ -293,7 +293,7 @@ export async function generateDailyMarkets() {
       console.log(`[Scheduler] Generating ${category} markets...`);
 
       const res = await anthropic.messages.create({
-        model:      "claude-sonnet-4-6",
+        model:      "claude-3-5-sonnet-20240620",
         max_tokens: 2000,
         messages:   [{ role: "user", content: prompt }],
       });
