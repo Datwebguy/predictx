@@ -4,12 +4,12 @@ dotenv.config({ path: path.resolve(__dirname, "../../../.env") }); // Loads root
 
 import Fastify from "fastify";
 import cors from "@fastify/cors";
-import { marketsRoute }    from "./routes/markets";
+import { marketsRoute } from "./routes/markets";
 import { resolutionRoute } from "./routes/resolution";
-import { usersRoute }      from "./routes/users";
+import { usersRoute } from "./routes/users";
 import { startResolutionWorker } from "./workers/resolution.worker";
-import { startScheduler }       from "./workers/scheduler.worker";
-import { startIndexer }         from "./workers/indexer";
+import { startScheduler } from "./workers/scheduler.worker";
+import { startIndexer } from "./workers/indexer";
 
 // Global Error Handlers (The Fortress)
 process.on("uncaughtException", (err) => {
@@ -40,9 +40,9 @@ async function bootstrap() {
     });
 
     console.log("[Bootstrap] Registering routes...");
-    server.register(marketsRoute,    { prefix: "/api/markets" });
+    server.register(marketsRoute, { prefix: "/api/markets" });
     server.register(resolutionRoute, { prefix: "/api/resolution" });
-    server.register(usersRoute,      { prefix: "/api/users" });
+    server.register(usersRoute, { prefix: "/api/users" });
 
     server.post("/api/indexer/trigger", async (req, reply) => {
       const { indexNewBlocks } = await import("./workers/indexer");
@@ -63,7 +63,7 @@ async function bootstrap() {
     // Start background workers ONLY after server is listening
     if (!process.env.VERCEL) {
       console.log("[Bootstrap] Initializing background tasks...");
-      
+
       try {
         startResolutionWorker();
         console.log("[Bootstrap] ✓ Resolution Worker started");
