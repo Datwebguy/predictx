@@ -10,6 +10,7 @@ export function useWalletAddress() {
   const [address,    setAddress]    = useState<string | null>(null);
   const [provider,   setProvider]   = useState<any>(null);
   const [walletType, setWalletType] = useState<string>("Unknown");
+  const [isReady,    setIsReady]    = useState(false);
 
   const detectActiveWallet = useCallback(async () => {
     if (!authenticated) {
@@ -17,6 +18,7 @@ export function useWalletAddress() {
       setBalance("0.00");
       setProvider(null);
       setWalletType("Unknown");
+      setIsReady(false);
       return;
     }
 
@@ -115,11 +117,12 @@ export function useWalletAddress() {
       console.log("[Wallet] user.wallet fallback:", detectedAddress);
     }
 
-    setAddress(detectedAddress);
-    setProvider(detectedProvider);
-    setWalletType(detectedType);
-
     if (detectedAddress) {
+      setAddress(detectedAddress);
+      setProvider(detectedProvider);
+      setWalletType(detectedType);
+      setIsReady(true);
+      
       getUSDCBalance(detectedAddress)
         .then(b => setBalance(Number(b).toFixed(2)))
         .catch(() => {});
@@ -176,5 +179,5 @@ export function useWalletAddress() {
     }
   }, [address]);
 
-  return { address, balance, provider, walletType, refreshBalance };
+  return { address, balance, provider, walletType, isReady, refreshBalance };
 }

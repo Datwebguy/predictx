@@ -41,7 +41,7 @@ function MarketDetailInner() {
   const { authenticated, login } = usePrivy();
   const { buyShares, step: buyStep, txHash: buyTxHash, errorMsg: buyErr, reset: resetBuy, isProcessing: isBuying } = useBuyShares();
   const { sellShares, step: sellStep, txHash: sellTxHash, errorMsg: sellErr, reset: resetSell, isProcessing: isSelling } = useSellShares();
-  const { address: walletAddress, provider: walletProvider } = useWalletAddress();
+  const { address: walletAddress, provider: walletProvider, isReady: walletReady } = useWalletAddress();
 
   const [market,   setMarket]   = useState<any>(null);
   const [loading,  setLoading]  = useState(true);
@@ -306,9 +306,14 @@ function MarketDetailInner() {
         </div>
 
         {/* ── Right column ── */}
-        <div style={{ position: "sticky", top: 24 }}>
+        <div style={{ 
+          position: "relative",
+          // Only sticky on desktop (min-width 768px approx)
+          // We apply it via a CSS class or just simpler inline check if we had breakpoint state
+          // For now, let's make it more resilient by just having good spacing
+        }}>
           {deployed ? (
-            <div style={{ ...card, marginBottom: 0, padding: 20 }}>
+            <div style={{ ...card, marginBottom: 0, padding: 24 }}>
 
               {/* Buy / Sell tab toggle */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 4, marginBottom: 20, background: "#1A1A1A", borderRadius: 10, padding: 4 }}>
@@ -421,18 +426,23 @@ function MarketDetailInner() {
 
                   <button
                     onClick={buyStep === "error" ? handleBuy : (!isBuying ? handleBuy : undefined)}
-                    disabled={isBuying}
+                    disabled={isBuying || (authenticated && !walletReady)}
                     style={{
-                      width: "100%", padding: "14px 0",
+                      width: "100%", padding: "16px 0",
                       background: buyStep === "success" ? "#22c55e" : buyStep === "error" ? "#ef4444" : side === "YES" ? "#22c55e" : "#ef4444",
                       color: (buyStep === "success" || side === "YES") ? "#000" : "#fff",
-                      fontWeight: 700, fontSize: 14, borderRadius: 12, border: "none",
-                      cursor: isBuying ? "not-allowed" : "pointer",
-                      fontFamily: "'DM Sans', sans-serif", opacity: isBuying ? 0.8 : 1,
+                      fontWeight: 700, fontSize: 15, borderRadius: 12, border: "none",
+                      cursor: (isBuying || (authenticated && !walletReady)) ? "not-allowed" : "pointer",
+                      fontFamily: "'DM Sans', sans-serif", opacity: (isBuying || (authenticated && !walletReady)) ? 0.8 : 1,
                       transition: "all 0.15s",
                     }}
                   >
-                    {authenticated ? STEP_LABELS[buyStep] ?? `Buy ${side} shares` : "Connect wallet to trade"}
+                    {!authenticated 
+                      ? "Connect wallet to trade" 
+                      : !walletReady 
+                        ? "Detecting wallet..." 
+                        : STEP_LABELS[buyStep] ?? `Buy ${side} shares`
+                    }
                   </button>
 
                   {buyStep === "error" && buyErr && (

@@ -101,8 +101,8 @@ export function getEthereumProvider(): any {
 }
 
 // ── Arc Testnet network management ─────────────────────────────────────────
-export async function addArcToWallet(): Promise<void> {
-  const provider = getEthereumProvider();
+export async function addArcToWallet(injectedProvider?: any): Promise<void> {
+  const provider = injectedProvider ?? getEthereumProvider();
   if (!provider) throw new Error("No wallet found");
   try {
     await provider.request({
@@ -114,8 +114,8 @@ export async function addArcToWallet(): Promise<void> {
   }
 }
 
-export async function switchToArc(): Promise<void> {
-  const provider = getEthereumProvider();
+export async function switchToArc(injectedProvider?: any): Promise<void> {
+  const provider = injectedProvider ?? getEthereumProvider();
   if (!provider) throw new Error("No wallet found");
 
   const currentChainId = await provider.request({ method: "eth_chainId" });
@@ -127,9 +127,10 @@ export async function switchToArc(): Promise<void> {
       params: [{ chainId: ARC_CHAIN_HEX }],
     });
   } catch (err: any) {
-    if (err.code === 4902 || err.code === -32603) {
+    // 4902: chain not added, 32603: generic error (often means chain not added in some mobile wallets)
+    if (err.code === 4902 || err.code === -32603 || err.message?.includes("Unrecognized chain ID")) {
       // Chain not in wallet — add it then switch
-      await addArcToWallet();
+      await addArcToWallet(provider);
       await provider.request({
         method: "wallet_switchEthereumChain",
         params: [{ chainId: ARC_CHAIN_HEX }],
@@ -188,7 +189,7 @@ export async function executeBuyShares(
 
   // 2. Switch to Arc Testnet
   onStep("switching_network");
-  await switchToArc();
+  await switchToArc(provider);
 
   // 3. Get connected account
   const accounts: string[] = await provider.request({ method: "eth_accounts" });
@@ -277,7 +278,7 @@ export async function executeSellShares(
   if (!provider) throw new Error("No wallet detected.");
 
   onStep("switching_network");
-  await switchToArc();
+  await switchToArc(provider);
 
   const accounts: string[] = await provider.request({ method: "eth_accounts" });
   if (!accounts?.length) throw new Error("Wallet is locked.");
