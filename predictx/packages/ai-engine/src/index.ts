@@ -14,7 +14,11 @@ import { startIndexer }         from "./workers/indexer";
 const server = Fastify({ logger: true });
 
 async function bootstrap() {
-  await server.register(cors, { origin: "*" });
+  await server.register(cors, {
+    origin: ["http://localhost:4200", /vercel\.app$/],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  });
 
   // Routes
   server.register(marketsRoute,    { prefix: "/api/markets" });
