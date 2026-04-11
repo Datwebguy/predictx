@@ -151,7 +151,12 @@ function MarketDetailInner() {
         ← All markets
       </Link>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 380px", gap: 24, alignItems: "start" }}>
+      <div style={{ 
+        display: "grid", 
+        gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 380px), 1fr))", 
+        gap: 24, 
+        alignItems: "start" 
+      }}>
         {/* ── Left column ── */}
         <div>
           {/* Header */}

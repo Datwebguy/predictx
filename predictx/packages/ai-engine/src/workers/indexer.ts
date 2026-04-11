@@ -99,14 +99,22 @@ async function processSharesBought(
       });
     }
 
-    // Update market volume
-    await prisma.market.update({
-      where: { id: market.id },
-      data: {
-        totalVolume: { increment: usdcAmount },
-        volume24h:   { increment: usdcAmount },
-      },
-    });
+    // Update market and user volume
+    await Promise.all([
+      prisma.market.update({
+        where: { id: market.id },
+        data: {
+          totalVolume: { increment: usdcAmount },
+          volume24h:   { increment: usdcAmount },
+        },
+      }),
+      prisma.user.update({
+        where: { address: trader },
+        data: {
+          totalVolume: { increment: usdcAmount }
+        }
+      })
+    ]);
 
     console.log(`[Indexer] ✓ Trade: ${trader.slice(0,8)}... ${isYes ? "YES" : "NO"} $${usdcAmount.toFixed(2)} — ${market.question.slice(0, 45)}...`);
   } catch (err: any) {

@@ -7,7 +7,7 @@ export async function usersRoute(fastify: FastifyInstance) {
     try {
       const { limit = 50 } = req.query as any;
       const users = await prisma.user.findMany({
-        orderBy: { totalPnl: "desc" },
+        orderBy: { totalVolume: "desc" },
         take: Number(limit),
       });
 

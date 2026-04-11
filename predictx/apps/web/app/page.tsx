@@ -284,7 +284,7 @@ export default function HomePage() {
       {/* Hero stats */}
       <div style={{
         display: "grid",
-        gridTemplateColumns: "repeat(4, 1fr)",
+        gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
         gap: 12, marginBottom: 32,
       }}>
         {[
@@ -423,7 +423,7 @@ export default function HomePage() {
       {loading ? (
         <div style={{
           display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
+          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
           gap: 14,
         }}>
           {[...Array(6)].map((_, i) => (
@@ -463,7 +463,7 @@ export default function HomePage() {
       ) : (
         <div style={{
           display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
+          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
           gap: 14,
         }}>
           {filtered.map((market: any) => (

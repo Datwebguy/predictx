@@ -35,7 +35,7 @@ Respond ONLY with valid JSON in this exact format:
 }`;
 
   const response = await anthropic.messages.create({
-    model: "claude-3-5-sonnet-latest",
+    model: "claude-3-haiku-20240307",
     max_tokens: 1000,
     messages: [{ role: "user", content: prompt }],
   });
@@ -60,26 +60,28 @@ export async function suggestMarkets(count = 5): Promise<any[]> {
   const today = new Date().toISOString().slice(0, 10);
 
   const response = await anthropic.messages.create({
-    model: "claude-3-5-haiku-latest",
+    model: "claude-3-haiku-20240307",
     max_tokens: 2000,
     messages: [{
       role: "user",
-      content: `Today is ${today}. Generate ${count} compelling binary prediction market questions about real-world events that could plausibly resolve within 1-60 days.
-
-Cover a mix of: crypto prices, sports fixtures, political events, tech announcements, entertainment.
-
-Use realistic, near-future resolution dates (ISO format). Make questions specific and objectively verifiable.
-
-Respond ONLY with a JSON array (no markdown, no explanation):
-[
-  {
-    "question": "Will X happen by [date]?",
-    "description": "Context and resolution criteria",
-    "category": "crypto|sports|politics|tech|entertainment|other",
-    "suggestedResolvesAt": "YYYY-MM-DDTHH:mm:ssZ",
-    "rationale": "Why this is interesting to traders"
-  }
-]`
+      content: `Today is ${today}. Generate ${count} compelling, high-quality binary prediction market questions about REAL-WORLD events occurring in May, June, or July 2026.
+      
+      CRITICAL INSTRUCTIONS:
+      - ONLY use real, confirmed events (e.g. UEFA Champions League, NBA Playoffs, Major Tech Launches, Crypto milestones).
+      - ABSOLUTELY NO test, dummy, or fictional markets.
+      - Ensure the resolution criteria are specific and objectively verifiable.
+      - Category mix: crypto, sports, politics, tech, entertainment.
+      
+      Respond ONLY with a JSON array:
+      [
+        {
+          "question": "Will [Confirmed Actor/Team/Person] [Action/Result] by [Specific Date]?",
+          "description": "Context about the real-world event and how to verify resolution via official sources.",
+          "category": "crypto|sports|politics|tech|entertainment|other",
+          "suggestedResolvesAt": "2026-MM-DDTHH:mm:ssZ",
+          "rationale": "High-interest factual event for traders."
+        }
+      ]`
     }],
   });
 
@@ -105,7 +107,7 @@ export async function validateMarketQuestion(question: string): Promise<{
   improvedQuestion?: string;
 }> {
   const response = await anthropic.messages.create({
-    model: "claude-3-5-sonnet-latest",
+    model: "claude-3-haiku-20240307",
     max_tokens: 500,
     messages: [{
       role: "user",

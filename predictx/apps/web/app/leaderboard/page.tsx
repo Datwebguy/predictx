@@ -45,7 +45,13 @@ export default function LeaderboardPage() {
           </Link>
         </div>
       ) : (
-        <div style={{ background:"#141414", border:"1px solid #232323", borderRadius:14, overflow:"hidden" }}>
+        <div style={{ 
+          background: "#141414", 
+          border: "1px solid #232323", 
+          borderRadius: 14, 
+          overflowX: "auto" 
+        }}>
+          <div style={{ minWidth: 600 }}>
           {/* Header */}
           <div style={{ display:"grid", gridTemplateColumns:"48px 1fr 100px 80px 100px", gap:12, padding:"10px 20px", borderBottom:"1px solid #232323" }}>
             {["Rank","Trader","P&L","Trades","Volume"].map(h => (
@@ -104,6 +110,7 @@ export default function LeaderboardPage() {
               </span>
             </div>
           ))}
+          </div>
         </div>
       )}
     </div>
