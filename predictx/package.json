@@ -8,6 +8,7 @@
     "packages/*"
   ],
   "scripts": {
+    "dev": "npm run dev:web & npm run dev:api",
     "dev:web": "npm run dev -w @predictx/web",
     "dev:mobile": "npm run start -w @predictx/mobile",
     "dev:api": "npm run dev -w @predictx/ai-engine",
