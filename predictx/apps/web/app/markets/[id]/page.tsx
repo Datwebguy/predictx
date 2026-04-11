@@ -399,6 +399,18 @@ function MarketDetailInner() {
                           <span style={{ color: color ?? "#F0F0F0", fontSize: 13, fontFamily: "monospace", fontWeight: 600 }}>{value}</span>
                         </div>
                       ))}
+
+                      {/* Price Impact Warning */}
+                      {Number(amount) > (market.liquidity || 5) && (
+                        <div style={{ 
+                          marginTop: 10, padding: "8px 12px", background: "rgba(255,214,10,0.1)", 
+                          border: "1px solid rgba(255,214,10,0.2)", borderRadius: 8,
+                          fontSize: 11, color: "#FFD60A", fontFamily: "'DM Sans', sans-serif",
+                          lineHeight: 1.4
+                        }}>
+                          ⚠ <strong>High Price Impact:</strong> Low liquidity may significantly reduce the number of shares you receive.
+                        </div>
+                      )}
                     </div>
                   )}
 
