@@ -15,9 +15,14 @@ const server = Fastify({ logger: true });
 
 async function bootstrap() {
   await server.register(cors, {
-    origin: ["http://localhost:4200", /vercel\.app$/],
+    origin: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
+  });
+
+  server.get("/health", async () => {
+    console.log("[Health] Check requested at", new Date().toISOString());
+    return { status: "ok", time: new Date().toISOString() };
   });
 
   // Routes
