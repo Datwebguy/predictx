@@ -135,4 +135,44 @@ export async function marketsRoute(fastify: FastifyInstance) {
   fastify.get("/:id/positions/:address", async (req, reply) => {
     return reply.send({ data: null });
   });
+
+  // POST /api/markets — create a new user-generated market
+  fastify.post("/", async (req, reply) => {
+    try {
+      const { question, description, category, resolvesAt, creatorAddress, initLiquidity } = req.body as any;
+
+      if (!question || !creatorAddress || !resolvesAt) {
+        return reply.status(400).send({ error: "Missing required fields" });
+      }
+
+      // Ensure creator user exists
+      await prisma.user.upsert({
+        where: { address: creatorAddress },
+        create: { address: creatorAddress },
+        update: {},
+      });
+
+      // Generate a mock contract address for this market
+      const mockAddress = `0x${Buffer.from(question + Date.now()).toString("hex").slice(0, 40)}`;
+
+      const market = await prisma.market.create({
+        data: {
+          address:        mockAddress,
+          question,
+          description,
+          category,
+          creatorAddress,
+          resolvesAt:     new Date(resolvesAt),
+          initLiquidity:  Number(initLiquidity),
+          liquidity:      Number(initLiquidity),
+          status:         "active",
+        },
+      });
+
+      return reply.send({ data: toMarket(market), success: true });
+    } catch (err: any) {
+      console.error("[Backend] Market Creation Error:", err.message);
+      return reply.status(500).send({ error: err.message });
+    }
+  });
 }

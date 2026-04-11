@@ -4,11 +4,21 @@
     "module": "commonjs",
     "lib": ["ES2020"],
     "outDir": "./dist",
-    "rootDir": "./src",
+    
+    // Root directory is automatically determined to include src/ and prisma/
     "strict": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
+    
+    // Limits auto-imports to just Node types (Quiet fix)
+    "types": ["node"],
+    
+    // Natural type resolution allows finding both local and root @types
+    "moduleResolution": "node",
+    
+    // Required for path aliases to work predictably
+    "baseUrl": ".",
     "paths": {
       "@predictx/shared": ["../../packages/shared/src/index.ts"]
     }

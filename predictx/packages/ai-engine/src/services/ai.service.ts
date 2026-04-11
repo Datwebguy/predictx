@@ -35,7 +35,7 @@ Respond ONLY with valid JSON in this exact format:
 }`;
 
   const response = await anthropic.messages.create({
-    model: "claude-sonnet-4-6",
+    model: "claude-3-5-sonnet-latest",
     max_tokens: 1000,
     messages: [{ role: "user", content: prompt }],
   });
@@ -60,7 +60,7 @@ export async function suggestMarkets(count = 5): Promise<any[]> {
   const today = new Date().toISOString().slice(0, 10);
 
   const response = await anthropic.messages.create({
-    model: "claude-haiku-4-5-20251001",
+    model: "claude-3-5-haiku-latest",
     max_tokens: 2000,
     messages: [{
       role: "user",
@@ -105,7 +105,7 @@ export async function validateMarketQuestion(question: string): Promise<{
   improvedQuestion?: string;
 }> {
   const response = await anthropic.messages.create({
-    model: "claude-sonnet-4-6",
+    model: "claude-3-5-sonnet-latest",
     max_tokens: 500,
     messages: [{
       role: "user",

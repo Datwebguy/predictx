@@ -3,22 +3,28 @@
   "version": "0.1.0",
   "private": true,
   "workspaces": [
-    "apps/*",
+    "apps/web",
+    "apps/mobile",
     "packages/*"
   ],
   "scripts": {
-    "dev:web": "yarn workspace @predictx/web dev",
-    "dev:mobile": "yarn workspace @predictx/mobile start",
-    "dev:api": "yarn workspace @predictx/ai-engine dev",
-    "build:contracts": "yarn workspace @predictx/contracts compile",
-    "test:contracts": "yarn workspace @predictx/contracts test",
-    "deploy:testnet": "yarn workspace @predictx/contracts deploy:arc"
+    "dev:web": "npm run dev -w @predictx/web",
+    "dev:mobile": "npm run start -w @predictx/mobile",
+    "dev:api": "npm run dev -w @predictx/ai-engine",
+    "build:contracts": "npm run compile -w @predictx/contracts",
+    "test:contracts": "npm run test -w @predictx/contracts",
+    "deploy:testnet": "npm run deploy:arc -w @predictx/contracts"
+  },
+  "dependencies": {
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
   },
   "devDependencies": {
     "typescript": "^5.4.0"
   },
   "overrides": {
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "scheduler": "0.23.0"
   }
 }

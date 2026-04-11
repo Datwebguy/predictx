@@ -6,7 +6,9 @@ const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 const CATEGORIES = ["crypto","sports","politics","tech","entertainment","other"];
 
 export default function CreateMarketPage() {
-  const { authenticated, login } = usePrivy();
+  const { authenticated, login, user } = usePrivy();
+  const address = user?.wallet?.address;
+
   const [question, setQuestion]       = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory]       = useState("crypto");
@@ -16,6 +18,7 @@ export default function CreateMarketPage() {
   const [validation, setValidation]   = useState<any>(null);
   const [submitting, setSubmitting]   = useState(false);
   const [success, setSuccess]         = useState(false);
+  const [error, setError]             = useState("");
 
   if (!authenticated) {
     return (
@@ -33,6 +36,7 @@ export default function CreateMarketPage() {
   const validate = async () => {
     if (!question.trim()) return;
     setValidating(true);
+    setValidation(null);
     try {
       const r = await fetch(`${API}/api/markets/validate`, {
         method:"POST", headers:{"Content-Type":"application/json"},
@@ -46,12 +50,35 @@ export default function CreateMarketPage() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!question || !description || !resolvesAt) return;
+    if (!question || !description || !resolvesAt || !address) return;
     setSubmitting(true);
+    setError("");
+
     try {
-      await new Promise(r => setTimeout(r, 1500));
-      setSuccess(true);
-    } finally { setSubmitting(false); }
+      const response = await fetch(`${API}/api/markets`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          question,
+          description,
+          category,
+          resolvesAt,
+          creatorAddress: address,
+          initLiquidity: liquidity,
+        }),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        setSuccess(true);
+      } else {
+        setError(result.error ?? "Failed to create market");
+      }
+    } catch (err: any) {
+      setError("Network error — is the backend running?");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const inp: React.CSSProperties = {
