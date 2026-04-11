@@ -11,75 +11,81 @@ import { startResolutionWorker } from "./workers/resolution.worker";
 import { startScheduler }       from "./workers/scheduler.worker";
 import { startIndexer }         from "./workers/indexer";
 
+// Global Error Handlers (The Fortress)
+process.on("uncaughtException", (err) => {
+  console.error("[FORTRESS] Uncaught Exception:", err.message);
+  console.error(err.stack);
+});
+
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("[FORTRESS] Unhandled Rejection at:", promise, "reason:", reason);
+});
+
 const server = Fastify({ logger: true });
 
 async function bootstrap() {
-  await server.register(cors, {
-    origin: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  });
+  console.log("[Bootstrap] Starting PredictX AI Engine...");
 
-  server.get("/health", async () => {
-    console.log("[Health] Check requested at", new Date().toISOString());
-    return { status: "ok", time: new Date().toISOString() };
-  });
+  try {
+    console.log("[Bootstrap] Registering CORS...");
+    await server.register(cors, {
+      origin: true,
+      methods: ["GET", "POST", "PUT", "DELETE"],
+      credentials: true,
+    });
 
-  // Routes
-  server.register(marketsRoute,    { prefix: "/api/markets" });
-  server.register(resolutionRoute, { prefix: "/api/resolution" });
-  server.register(usersRoute,      { prefix: "/api/users" });
+    server.get("/health", async () => {
+      console.log("[Health] Check requested");
+      return { status: "ok", time: new Date().toISOString() };
+    });
 
-  // Manual trigger for Indexer (useful for Vercel/Cron)
-  server.post("/api/indexer/trigger", async (req, reply) => {
-    try {
+    console.log("[Bootstrap] Registering routes...");
+    server.register(marketsRoute,    { prefix: "/api/markets" });
+    server.register(resolutionRoute, { prefix: "/api/resolution" });
+    server.register(usersRoute,      { prefix: "/api/users" });
+
+    server.post("/api/indexer/trigger", async (req, reply) => {
       const { indexNewBlocks } = await import("./workers/indexer");
       await indexNewBlocks();
-      return reply.send({ success: true, message: "Indexing complete" });
-    } catch (err: any) {
-      return reply.status(500).send({ error: err.message });
+      return reply.send({ success: true });
+    });
+
+    server.get("/", async () => ({
+      name: "PredictX AI Engine",
+      status: "ok",
+    }));
+
+    const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3001;
+    console.log(`[Bootstrap] Attempting to listen on port ${port}...`);
+    await server.listen({ port, host: "0.0.0.0" });
+    console.log(`[Bootstrap] ✓ Server listening on port ${port}`);
+
+    // Start background workers ONLY after server is listening
+    if (!process.env.VERCEL) {
+      console.log("[Bootstrap] Initializing background tasks...");
+      
+      try {
+        startResolutionWorker();
+        console.log("[Bootstrap] ✓ Resolution Worker started");
+      } catch (e: any) { console.error("[Bootstrap] Resolution Worker Error:", e.message); }
+
+      try {
+        startScheduler();
+        console.log("[Bootstrap] ✓ Scheduler started");
+      } catch (e: any) { console.error("[Bootstrap] Scheduler Error:", e.message); }
+
+      try {
+        startIndexer();
+        console.log("[Bootstrap] ✓ Indexer started");
+      } catch (e: any) { console.error("[Bootstrap] Indexer Error:", e.message); }
     }
-  });
 
-  // Root
-  server.get("/", async () => ({
-    name: "PredictX AI Engine",
-    version: "0.1.0",
-    status: "ok",
-    endpoints: ["/health", "/api/markets", "/api/resolution", "/api/users"],
-  }));
-
-  // Health check
-  server.get("/health", async () => ({ status: "ok", ts: Date.now() }));
-
-  // Start background workers
-  if (!process.env.VERCEL) {
-    console.log("[Bootstrap] Starting background services...");
-    try {
-      startResolutionWorker();
-      console.log("[Bootstrap] ✓ Resolution Worker initialized");
-    } catch (err: any) {
-      console.warn("[Bootstrap] ⚠ Resolution Worker failed to start (likely missing Redis):", err.message);
-    }
-
-    try {
-      startScheduler();
-      console.log("[Bootstrap] ✓ Scheduler initialized");
-    } catch (err: any) {
-      console.warn("[Bootstrap] ⚠ Scheduler failed to start:", err.message);
-    }
-
-    try {
-      startIndexer();
-      console.log("[Bootstrap] ✓ Indexer initialized");
-    } catch (err: any) {
-      console.warn("[Bootstrap] ⚠ Indexer failed to start:", err.message);
-    }
+  } catch (err: any) {
+    console.error("[Bootstrap] FATAL STARTUP ERROR:", err.message);
+    console.error(err.stack);
+    // Keep process alive for at least 30s to allow log viewing
+    setTimeout(() => process.exit(1), 30000);
   }
-
-  const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3001;
-  await server.listen({ port, host: "0.0.0.0" });
-  console.log(`PredictX AI Engine running on :${port}`);
 }
 
-bootstrap().catch((err) => { console.error(err); process.exit(1); });
+bootstrap();
