@@ -54,9 +54,27 @@ async function bootstrap() {
 
   // Start background workers
   if (!process.env.VERCEL) {
-    startResolutionWorker();
-    startScheduler();
-    startIndexer();
+    console.log("[Bootstrap] Starting background services...");
+    try {
+      startResolutionWorker();
+      console.log("[Bootstrap] ✓ Resolution Worker initialized");
+    } catch (err: any) {
+      console.warn("[Bootstrap] ⚠ Resolution Worker failed to start (likely missing Redis):", err.message);
+    }
+
+    try {
+      startScheduler();
+      console.log("[Bootstrap] ✓ Scheduler initialized");
+    } catch (err: any) {
+      console.warn("[Bootstrap] ⚠ Scheduler failed to start:", err.message);
+    }
+
+    try {
+      startIndexer();
+      console.log("[Bootstrap] ✓ Indexer initialized");
+    } catch (err: any) {
+      console.warn("[Bootstrap] ⚠ Indexer failed to start:", err.message);
+    }
   }
 
   const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3001;
